@@ -1,5 +1,3 @@
-import sys
-import string
 import argparse
 import chardet
 
@@ -7,20 +5,19 @@ def main():
     verbose_mode = False
     # setup argparse
     parser = argparse.ArgumentParser(description="Lines is a basic python script that display stats about a python file. For example, how many lines, characters, letters and digits are occurring in a given file.")
-    parser.add_argument('-f', '--file', required=False, help="file path")
-    # Parse arguments
+    parser.add_argument('-f', '--file', nargs="?", type=str, help="file path")
     args = parser.parse_args()
+
     if args.file:
         file_path = args.file
         if file_list:= get_file(file_path):
             file_stats(file_list)
     else:
-        parser.error("No arguments")
+        parser.error("No file specified")
 
 def file_stats(file_list):
     characters = []
     letters = []
-    symbols = []
     digits = []
     whitespace = []
     others = []
@@ -35,12 +32,12 @@ def file_stats(file_list):
                 whitespace.append(char)
             else:
                 others.append(char)
+
     print("characters:".title(), len(characters))
     print("letters:".title(), len(letters))
     print("digits:".title(), len(digits))
     print("whitespace:".title(), len(whitespace))
-    print("others:".title(), len(others))
-
+    print("symbols:".title(), len(others))
 
 def get_file(file_path):
     try:
@@ -50,10 +47,9 @@ def get_file(file_path):
         encoding = detector["encoding"]
         file_list = file_data.decode(encoding).splitlines(keepends=True)
         return file_list
-    except (FileNotFoundError, UnicodeDecodeError, chardet.UniversalDetectorError) as e:
+    except (FileNotFoundError, UnicodeDecodeError) as e:
         print(f"Error: {e}")
         return None
-
 
 if __name__ == "__main__":
     main()
